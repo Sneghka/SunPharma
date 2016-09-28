@@ -28,7 +28,7 @@ namespace SunPharma
             var methods = new Methods(firefox);
             
             DateTime dateFrom = new DateTime(2016,04,01);
-            DateTime dateTo = new DateTime(2016,05,01);
+            DateTime dateTo = new DateTime(2016,08,01);
             var url ="http://pharmxplorer.com.ua/QvAJAXZfc/opendoc.htm?document=TestDocs\\SunPharma\\Proxima_Distr_SunPharma.qvw&host=QVS@qlikview&anonymous=true";
             var login = "user_sp";
             var password = "34xcpqfo7y";

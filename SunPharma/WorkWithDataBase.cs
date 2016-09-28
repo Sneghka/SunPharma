@@ -30,11 +30,11 @@ namespace SunPharma
                 while (reader.Read())
                 {
                     var monthPreformat = reader["PERIOD_ID"].ToString().Trim().Replace(" ","").Substring(4,2);
-                    var yearPreformat = reader["PERIOD_ID"].ToString().Trim().Replace(" ", "").Substring(0, 4);
+                    var yearPreformat = reader["PERIOD_ID"].ToString().Trim().Replace(" ", "").Substring(0,4);
                     var rowData = new RowData
                     {
-                        Distibutor = reader["Name_BASIC_RUS"].ToString().Trim(),
-                        SalesMonthPcs = Convert.ToDecimal(reader["Q_RECALC"]),
+                        Distributor = reader["Name_BASIC_RUS"].ToString().Trim(),
+                        SalesMonthPcs = Math.Round(Convert.ToDecimal(reader["Q_RECALC"]), 1),
                         Month = Convert.ToInt32(monthPreformat),
                         Year = Convert.ToInt32(yearPreformat)
                     };

@@ -33,6 +33,8 @@ namespace SunPharma
         private List<string> messageContent = new List<string>();
         private RowDataList _dashboardData = new RowDataList();
         private RowDataList _morionData = new RowDataList();
+        private int DivNumber = 7; //номер div, с которого начинаются данные по продажам
+        private int DivRange = 7; //период div, через которые нужно отбирать продажи
 
 
 
@@ -249,22 +251,16 @@ namespace SunPharma
                 for (int n = 2; n < distributorsList.Count; n++) // включая Others
                 {
                     var name = distributorsList[n].GetAttribute("title");
-                    string formatName = string.Empty;
-                    if (name.IndexOf('.') == -1)
+                    if (name.IndexOf('.') != -1)
                     {
-                        formatName = name;
+                        name = name.Substring(name.IndexOf('.') + 2);
                     }
-                    else
-                    {
-                        formatName = name.Substring(name.IndexOf('.') + 2);
-                    }
-                   
-                    distributorArray.Add(formatName);
-
+                    distributorArray.Add(name);
                 }
-                for (int n = 7; n <= distributorArray.Count * 7; n = n + 7) // считываем цифры исходя из кол-ва имён дистрибьюторов
+
+                for (int n = DivNumber; n <= distributorArray.Count * DivRange; n = n + DivRange) // считываем цифры исходя из кол-ва имён дистрибьюторов
                 {
-                    var sales = Convert.ToDecimal(salesPcsList[n].GetAttribute("title"));
+                    var sales = Math.Round(Convert.ToDecimal(salesPcsList[n].GetAttribute("title")), 1);
                     salesArray.Add(sales);
                 }
 
@@ -272,7 +268,7 @@ namespace SunPharma
                 {
                     var rowData = new RowData()
                     {
-                        Distibutor = distributorArray[x],
+                        Distributor = distributorArray[x],
                         SalesMonthPcs = salesArray[x],
                         Year = i.Year,
                         Month = i.Month
@@ -280,11 +276,7 @@ namespace SunPharma
                     _dashboardData.Add(rowData);
                 }
             }
-
-            /* foreach (var data in _dashboardData)
-             {
-                 Console.WriteLine(data.Year + " " + data.Month + " " + data.Distibutor + " " + data.SalesMonthPcs);
-             }*/
+            Console.WriteLine("Data have been stored from dashboard ");
         }
 
         public void StoreMorionData(DateTime dateFrom, DateTime dateTo)
@@ -324,36 +316,36 @@ namespace SunPharma
 
         public void CompareData()
         {
-           
-             Console.WriteLine("Сверяем базу с дашбордом:");
-             var diff1 = RowDataList.CompareRowDataObjects2(_morionData, _dashboardData);
-             if (diff1.Count != 0)
-             {
-                 Console.WriteLine("Данные из базы отсутствуют в дашборде");
-                 foreach (var d in diff1)
-                 {
-                     Console.WriteLine(d.Year + " " + d.Month + " " + d.Distibutor + " " + d.SalesMonthPcs);
-                 }
-             }
-             else
-             {
-                 Console.WriteLine("Расхождений нет");
-             }
 
-             Console.WriteLine("Сверяем дашборд с базой:");
-             var diff2 = RowDataList.CompareRowDataObjects2(_dashboardData, _morionData);
-             if (diff2.Count != 0)
-             {
-                 Console.WriteLine("Данные из дашборда отсутствуют в базе");
-                 foreach (var d in diff2)
-                 {
-                     Console.WriteLine(d.Year + " " + d.Month + " " + d.Distibutor + " " + d.SalesMonthPcs);
-                 }
-             }
-             else
-             {
-                 Console.WriteLine("Расхождений нет");
-             }
+            Console.WriteLine("Сверяем базу с дашбордом:");
+            var diff1 = RowDataList.CompareRowDataObjects2(_morionData, _dashboardData);
+            if (diff1.Count != 0)
+            {
+                Console.WriteLine("Данные из базы отсутствуют в дашборде");
+                foreach (var d in diff1)
+                {
+                    Console.WriteLine(d.Year + " " + d.Month + " " + d.Distributor + " " + d.SalesMonthPcs);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Расхождений нет");
+            }
+
+            Console.WriteLine("Сверяем дашборд с базой:");
+            var diff2 = RowDataList.CompareRowDataObjects2(_dashboardData, _morionData);
+            if (diff2.Count != 0)
+            {
+                Console.WriteLine("Данные из дашборда отсутствуют в базе");
+                foreach (var d in diff2)
+                {
+                    Console.WriteLine(d.Year + " " + d.Month + " " + d.Distributor + " " + d.SalesMonthPcs);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Расхождений нет");
+            }
         }
     }
 }
