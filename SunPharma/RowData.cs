@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SunPharma
+{
+    public class RowData
+    {
+        public string Distibutor { get; set; }
+        public decimal SalesMonthPcs { get; set; }
+        public decimal PlanMonthPcs { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
+
+
+        public bool IsEqual(RowData anotherOne)
+        {
+            if (Distibutor == anotherOne.Distibutor && SalesMonthPcs == anotherOne.SalesMonthPcs &&
+                Year == anotherOne.Year && Month == anotherOne.Month)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    }
+}
