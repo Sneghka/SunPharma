@@ -160,8 +160,6 @@ namespace SunPharma
         }
 
 
-
-
         public void LoginSunPharma(string url, string login, string password)
         {
             WebDriverWait wait = new WebDriverWait(_firefox, TimeSpan.FromSeconds(120));
@@ -232,6 +230,7 @@ namespace SunPharma
             {
                 var currentDate = i.ToString("yyyy MM");
                 TryToClick(PageElements.ChoosenDateXpath);
+                Thread.Sleep(2000);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.DropDownPeriodMenuXpath)));
                 action.ContextClick(pageElements.DropDownPeriodMenu).Perform();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(PageElements.SearchOptionXpath)));
@@ -241,15 +240,20 @@ namespace SunPharma
                 pageElements.InputField.SendKeys(currentDate + Keys.Enter);
                 Thread.Sleep(500);
                 WaitForTextPatternInAttribute(PageElements.ChoosenDateXpath, "title", currentDate);
-                Thread.Sleep(200);
-                var distributorsList = _firefox.FindElementsByXPath(".//*[@class='QvFrame Document_CH1324']/div[3]/div[1]/div[1]/div[2]/div/div");
-                var salesPcsList = _firefox.FindElementsByXPath(".//*[@class='QvFrame Document_CH1324']/div[3]/div[1]/div[1]/div[5]/div/div");
+                Thread.Sleep(2000);
+                var distributorsList =
+                    _firefox.FindElementsByXPath(
+                        ".//*[@class='QvFrame Document_CH1324']/div[3]/div[1]/div[1]/div[2]/div/div");
+                var salesPcsList =
+                    _firefox.FindElementsByXPath(
+                        ".//*[@class='QvFrame Document_CH1324']/div[3]/div[1]/div[1]/div[5]/div/div");
 
                 List<string> distributorArray = new List<string>();
                 List<decimal> salesArray = new List<decimal>();
 
                 for (int n = 2; n < distributorsList.Count; n++) // включая Others
                 {
+                    if(distributorsList[n].GetAttribute("title") == "Others")continue;
                     var name = distributorsList[n].GetAttribute("title");
                     if (name.IndexOf('.') != -1)
                     {
@@ -258,7 +262,8 @@ namespace SunPharma
                     distributorArray.Add(name);
                 }
 
-                for (int n = DivNumber; n <= distributorArray.Count * DivRange; n = n + DivRange) // считываем цифры исходя из кол-ва имён дистрибьюторов
+                for (int n = DivNumber; n <= distributorArray.Count * DivRange; n = n + DivRange)
+                // считываем цифры исходя из кол-ва имён дистрибьюторов
                 {
                     var sales = Math.Round(Convert.ToDecimal(salesPcsList[n].GetAttribute("title")), 1);
                     salesArray.Add(sales);
@@ -284,7 +289,7 @@ namespace SunPharma
             for (DateTime i = dateFrom; i <= dateTo; i = i.AddMonths(1))
             {
                 RowDataList morionData;
-                var currentMonth = "0" + i.Month;
+                var currentMonth = i.Month > 9 ? i.Month.ToString() : "0" + i.Month;
                 var currentYear = i.Year.ToString();
 
                 var query =
@@ -308,6 +313,9 @@ namespace SunPharma
                 _morionData.AddRange(morionData);
             }
 
+            Thread.Sleep(2000);
+
+
             /*foreach (var data in _morionData)
            {
                Console.WriteLine(data.Year + " " + data.Month + " " + data.Distibutor + " " + data.SalesMonthPcs);
@@ -316,35 +324,20 @@ namespace SunPharma
 
         public void CompareData()
         {
-
-            Console.WriteLine("Сверяем базу с дашбордом:");
-            var diff1 = RowDataList.CompareRowDataObjects2(_morionData, _dashboardData);
-            if (diff1.Count != 0)
+            Console.WriteLine("Есть в базе, но не совпадает с дашбордом:");
+            var diff1 = RowDataList.ComparePcsByDistributorByDate(_morionData, _dashboardData);
+            foreach (var d in diff1)
             {
-                Console.WriteLine("Данные из базы отсутствуют в дашборде");
-                foreach (var d in diff1)
-                {
+                if (d.SalesMonthPcs != 0)
                     Console.WriteLine(d.Year + " " + d.Month + " " + d.Distributor + " " + d.SalesMonthPcs);
-                }
             }
-            else
+            
+            Console.WriteLine("Есть в дашборде, но не совпадают с базой:");
+            var diff2 = RowDataList.ComparePcsByDistributorByDate(_dashboardData, _morionData);
+            foreach (var d in diff2)
             {
-                Console.WriteLine("Расхождений нет");
-            }
-
-            Console.WriteLine("Сверяем дашборд с базой:");
-            var diff2 = RowDataList.CompareRowDataObjects2(_dashboardData, _morionData);
-            if (diff2.Count != 0)
-            {
-                Console.WriteLine("Данные из дашборда отсутствуют в базе");
-                foreach (var d in diff2)
-                {
+                if (d.SalesMonthPcs != 0)
                     Console.WriteLine(d.Year + " " + d.Month + " " + d.Distributor + " " + d.SalesMonthPcs);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Расхождений нет");
             }
         }
     }

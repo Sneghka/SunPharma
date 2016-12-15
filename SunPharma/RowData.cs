@@ -26,6 +26,7 @@ namespace SunPharma
         {
             if (Distributor == anotherOne.Distributor && SalesMonthPcs == anotherOne.SalesMonthPcs &&
                 Year == anotherOne.Year && Month == anotherOne.Month)
+           
             {
                 return true;
             }
@@ -36,6 +37,8 @@ namespace SunPharma
 
         }
 
-       
+        
+
+
     }
 }

@@ -28,12 +28,13 @@ namespace SunPharma
             var methods = new Methods(firefox);
             
             DateTime dateFrom = new DateTime(2016,04,01);
-            DateTime dateTo = new DateTime(2016,08,01);
-            var url ="http://pharmxplorer.com.ua/QvAJAXZfc/opendoc.htm?document=TestDocs\\SunPharma\\Proxima_Distr_SunPharma.qvw&host=QVS@qlikview&anonymous=true";
+            DateTime dateTo = new DateTime(2016,11,01);
+            var urlTest ="http://pharmxplorer.com.ua/QvAJAXZfc/opendoc.htm?document=TestDocs\\SunPharma\\Proxima_Distr_SunPharma.qvw&host=QVS@qlikview&anonymous=true";
+            var url ="http://pharmxplorer.com.ua/QvAJAXZfc/opendoc.htm?document=PublishedDocs\\Proxima_Distr_SunPharma.qvw&host=QVS@qlikview&anonymous=true";
             var login = "user_sp";
             var password = "34xcpqfo7y";
 
-            methods.LoginSunPharma(url, login, password);
+            methods.LoginSunPharma(urlTest, login, password);
             methods.SetUpFilters();
             methods.StoreDashBoardData(dateFrom, dateTo);
             methods.StoreMorionData(dateFrom, dateTo);
